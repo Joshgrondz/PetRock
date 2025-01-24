@@ -32,6 +32,7 @@ public class PetRock {
         hunger = 2;
         boredom = 2;
         energy = 5;
+        mood = Mood.HAPPY;
     }
 
     public String getName() {
