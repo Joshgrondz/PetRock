@@ -29,6 +29,9 @@ public class PetRock {
         name = Name;
         beenPolished = false;
         polishNumber = 0;
+        hunger = 2;
+        boredom = 2;
+        energy = 5;
     }
 
     public String getName() {
@@ -91,6 +94,7 @@ public class PetRock {
         boredom++;
         energy--;
         beenPolished = false;
+        polishNumber = 0;
         updateMood();
         checkStats();
     }
@@ -103,6 +107,7 @@ public class PetRock {
         hunger++;
         energy -= 2;
         beenPolished = false;
+        polishNumber = 0;
         updateMood();
         checkStats();
     }
@@ -138,12 +143,17 @@ public class PetRock {
     }
 
     public void updateMood(){
-        if(energy <= 3){
+        if (energy <= 2){
             mood = Mood.TIRED;
-        } else if (hunger >= 7) {
-            mood = Mood.SAD;
-        } else if (boredom >= 7) {
+        }
+        else if(((hunger >= 4 && hunger <= 7)||( boredom >= 4 && boredom <= 7)) && energy > 3){
             mood = Mood.BORED;
+        }
+        else if ((hunger > 7 || boredom > 7 || energy <= 3)){
+            mood = Mood.SAD;
+        }
+        else if(hunger < 4 && boredom < 4 && energy > 3){
+            mood = Mood.HAPPY;
         }
     }
 
