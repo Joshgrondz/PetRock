@@ -92,6 +92,7 @@ public class PetRock {
         energy--;
         beenPolished = false;
         updateMood();
+        checkStats();
     }
 
     //Decreases Boredom by 3
@@ -103,6 +104,7 @@ public class PetRock {
         energy -= 2;
         beenPolished = false;
         updateMood();
+        checkStats();
     }
 
     //Sets mood to happy
@@ -132,15 +134,44 @@ public class PetRock {
                 polishNumber++;
             }
         }
+        checkStats();
     }
 
     public void updateMood(){
         if(energy <= 3){
             mood = Mood.TIRED;
-        } else if (hunger <= 3) {
+        } else if (hunger >= 7) {
             mood = Mood.SAD;
-        } else if (boredom <= 3) {
+        } else if (boredom >= 7) {
             mood = Mood.BORED;
+        }
+    }
+
+    //checks that stats stay between (0-10)
+    private void checkStats(){
+        if(hunger < 0 || hunger > 10){
+            if (hunger < 0){
+                hunger = 0;
+            }
+            if (hunger > 10){
+                hunger = 10;
+            }
+        }
+        if(boredom < 0 || boredom > 10){
+            if (boredom < 0){
+                boredom = 0;
+            }
+            if (boredom > 10){
+                boredom = 10;
+            }
+        }
+        if(energy < 0 || energy > 10){
+            if (energy < 0){
+                energy = 0;
+            }
+            if (energy > 10){
+                energy = 10;
+            }
         }
     }
 }
