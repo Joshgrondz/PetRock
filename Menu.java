@@ -27,31 +27,25 @@ public class Menu {
         }
 
         while (true) {
-            System.out.println(
-                    """
-                                _________
-                               /         \\
-                              /           \\
-                             |   O   O    |
-                              \\    ___   /
-                               \\________/
-                            """);
+            displayRock(myRock);
             System.out.println("Choose an option : ");
             System.out.println("1. Feed the rock");
             System.out.println("2. Play with the rock");
             System.out.println("3. Polish the rock");
             System.out.println("4. Check the rock's stats");
             System.out.println("5. Quit (The rock will remain saved)");
+            System.out.println("6. Rest");
+            System.out.println("7. Delete");
             currentInput = sc.nextInt();
 
             // Check if out of energy
-            if (myRock.getEnergy() == 0 && currentInput != 5 && currentInput != 69) {
+            if (myRock.getEnergy() == 0 && currentInput != 5 && currentInput != 69 && currentInput != 4 && currentInput != 6) {
                 System.out.println("The rock is tired (energy 0), resting");
                 currentInput = 6; // Rest
             }
 
             // Check if violating cooldowns
-            if (currentInput == lastTurnsChoice && currentInput != 5 && currentInput != 69) {
+            if (currentInput == lastTurnsChoice && currentInput != 5 && currentInput != 69 && currentInput != 4 && currentInput != 6) {
                 System.out.println("Can't do the same thing twice in a row! Resting instead");
                 currentInput = 6;
             }
@@ -74,7 +68,7 @@ public class Menu {
                     saveState(myRock);
                     System.exit(69);
                     break;
-                case 69:
+                case 7:
                     System.out.println(
                             "    _________\n" +
                                     "   /         \\\n" +
@@ -87,8 +81,8 @@ public class Menu {
                     System.exit(69);
                     break;
                 default:
-                    System.out.println("You Do Nothing! +1 Energy");
-                    myRock.setEnergy(myRock.getEnergy() + 1);
+                    System.out.println("You Do Nothing! +3 Energy");
+                    myRock.setEnergy(myRock.getEnergy() + 3);
                     break;
             }
 
@@ -97,13 +91,15 @@ public class Menu {
             myRock.setHunger(myRock.getHunger() + 1);
             myRock.setBoredom(myRock.getBoredom() + 1);
 
-            if (random.nextInt(4) == 0) { // 25% chance (0 out of 0-3)
+            if (random.nextInt(4) >=1) { // 25% chance (0 out of 0-3)
                 randomEvents(myRock);
             } else {
                 System.out.println("Nothing unusual happened. The day ends.");
             }
 
             // Save state after every action
+            myRock.updateMood();
+            myRock.checkStats();
             saveState(myRock);
         }
     }
@@ -126,8 +122,10 @@ public class Menu {
                 myRock.setMood("Sad");
                 break;
             case 3:
-                System.out.println("Your rock compared itself to unrealistic body images online and started a diet. Hunger Decreased.");
-                myRock.setHunger(myRock.getHunger() - 2);
+                System.out.println("Your rock grows more powerful..");
+                myRock.setHunger(myRock.getHunger() - 4);
+                myRock.setEnergy(myRock.getEnergy() +3);
+                myRock.setBoredom(myRock.getBoredom() - 2);
                 break;
             case 4:
                 System.out.println("Your rock got hit by a car. Energy decreased!");
@@ -139,6 +137,7 @@ public class Menu {
                 myRock.setBoredom(myRock.getBoredom() + 2);
                 break;
         }
+        myRock.checkStats();
     }
 
     private static void saveState(PetRock myRock) {
@@ -199,4 +198,66 @@ public class Menu {
         String pattern = "\"" + key + "\":\\s*\"?([^\",}]*)\"?";
         return json.replaceAll(".*" + pattern + ".*", "$1");
     }
+
+    public static void displayRock(PetRock myRock) {
+        switch (myRock.getMood()) {
+            case "Happy":
+                System.out.println(
+                        """
+                                _________
+                               /         \\
+                              /           \\
+                             |   ^   ^    |
+                              \\  \\___/  /
+                               \\________/
+                            """);
+                break;
+            case "Sad":
+                System.out.println(
+                        """
+                                _________
+                               /         \\
+                              /           \\
+                             |   T   T    |
+                              \\    ---   /
+                               \\________/
+                            """);
+                break;
+            case "Bored":
+                System.out.println(
+                        """
+                                _________
+                               /         \\
+                              /           \\
+                             |   -   -    |
+                              \\    ---   /
+                               \\________/
+                            """);
+                break;
+            case "Tired":
+                System.out.println(
+                        """
+                                _________
+                               /         \\
+                              /           \\
+                             |   _   _    |
+                              \\    zzz   /
+                               \\________/
+                            """);
+                break;
+            default: // Fallback for unhandled moods
+                System.out.println(
+                        """
+                                _________
+                               /         \\
+                              /           \\
+                             |   O   O    |
+                              \\    ___   /
+                               \\________/
+                            """);
+                break;
+        }
+    }
+
+
 }
