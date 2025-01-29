@@ -101,7 +101,23 @@ public class Menu {
             myRock.updateMood();
             myRock.checkStats();
             saveState(myRock);
+
+            //check loss conditions
+            if (myRock.getHunger() >= 10 || myRock.getBoredom() >= 10 || myRock.getEnergy() <= 0) {
+                if (myRock.getEnergy() <= 0) {
+                    System.out.println("Your rock has crumbled to dust! Game over.");
+                }
+                else if(myRock.getHunger() <= 0){
+                    System.out.println("Your rock has left in seek of food! Game over.");
+                }
+                else{
+                    System.out.println("Your rock has left to find someone less boring! Game over.");
+                }
+                deleteState(); // Delete saved state
+                System.exit(0);
         }
+    }
+
     }
 
     private static void randomEvents(PetRock myRock) {
