@@ -9,7 +9,7 @@ public class Menu {
         Scanner sc = new Scanner(System.in);
         Random random = new Random();
 
-        PetRock myRock = loadState();
+        PetRock myRock = FileManagement.loadState();
         if (myRock == null) {
             System.out.println("Welcome to Pet Rock");
             System.out.println(
@@ -65,7 +65,7 @@ public class Menu {
                     break;
                 case 5:
                     System.out.println("Thank you for using Pet Rock");
-                    saveState(myRock);
+                    FileManagement.saveState(myRock);
                     System.exit(69);
                     break;
                 case 7:
@@ -77,7 +77,7 @@ public class Menu {
                                     "  \\    ___   /\n" +
                                     "   \\________/\n" +
                                     myRock.getName() + " has been brutally killed. You may now leave.");
-                    deleteState(); // Delete saved state
+                    FileManagement.deleteState(); // Delete saved state
                     System.exit(69);
                     break;
                 default:
@@ -100,7 +100,7 @@ public class Menu {
             // Save state after every action
             myRock.updateMood();
             myRock.checkStats();
-            saveState(myRock);
+            FileManagement.saveState(myRock);
 
             //check loss conditions
             if (myRock.getHunger() >= 10 || myRock.getBoredom() >= 10 || myRock.getEnergy() <= 0) {
@@ -113,7 +113,7 @@ public class Menu {
                 else{
                     System.out.println("Your rock has left to find someone less boring! Game over.");
                 }
-                deleteState(); // Delete saved state
+                FileManagement.deleteState(); // Delete saved state
                 System.exit(0);
         }
     }
@@ -154,65 +154,6 @@ public class Menu {
                 break;
         }
         myRock.checkStats();
-    }
-
-    private static void saveState(PetRock myRock) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("rock.json"))) {
-            writer.write("{\n");
-            writer.write("  \"name\": \"" + myRock.getName() + "\",\n");
-            writer.write("  \"mood\": \"" + myRock.getMood() + "\",\n");
-            writer.write("  \"hunger\": " + myRock.getHunger() + ",\n");
-            writer.write("  \"boredom\": " + myRock.getBoredom() + ",\n");
-            writer.write("  \"energy\": " + myRock.getEnergy() + "\n");
-            writer.write("}");
-        } catch (IOException e) {
-            System.out.println("Error saving rock state: " + e.getMessage());
-        }
-    }
-
-    private static PetRock loadState() {
-        File file = new File("rock.json");
-        if (!file.exists()) {
-            return null; // No save file, start fresh
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            StringBuilder json = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                json.append(line.trim());
-            }
-
-            // Parse JSON manually
-            String jsonString = json.toString();
-            String name = extractValue(jsonString, "name");
-            String mood = extractValue(jsonString, "mood");
-            int hunger = Integer.parseInt(extractValue(jsonString, "hunger"));
-            int boredom = Integer.parseInt(extractValue(jsonString, "boredom"));
-            int energy = Integer.parseInt(extractValue(jsonString, "energy"));
-
-            PetRock myRock = new PetRock(name);
-            myRock.setMood(mood);
-            myRock.setHunger(hunger);
-            myRock.setBoredom(boredom);
-            myRock.setEnergy(energy);
-            return myRock;
-        } catch (IOException e) {
-            System.out.println("Error loading rock state: " + e.getMessage());
-        }
-        return null;
-    }
-
-    private static void deleteState() {
-        File file = new File("rock.json");
-        if (file.exists() && file.delete()) {
-            System.out.println("Rock state deleted.");
-        }
-    }
-
-    private static String extractValue(String json, String key) {
-        String pattern = "\"" + key + "\":\\s*\"?([^\",}]*)\"?";
-        return json.replaceAll(".*" + pattern + ".*", "$1");
     }
 
     public static void displayRock(PetRock myRock) {
